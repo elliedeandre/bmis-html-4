@@ -126,6 +126,64 @@
   .step6                { display: flex; justify-content: center; align-items: center; height: 220px; }
   .wrong img            { margin: 0 auto; }            /* missing display:block */
 
+  /* =====================================================================
+     ANIMATIONS (for the live examples only)
+     The centering CSS above is what really centers each image. The
+     movement below just REPLAYS it: each image starts at the default
+     left spot, slides to its centered spot, rests, then repeats.
+     ===================================================================== */
+
+  /* Slide sideways. position:relative lets "left" nudge the image
+     without changing the layout. -50% + 80px = the distance from the
+     centered spot back to the left edge (80px is half the image width). */
+  @keyframes slide-x {
+    0%, 15%   { left: calc(-50% + 80px); }
+    50%, 85%  { left: 0; }
+    100%      { left: calc(-50% + 80px); }
+  }
+
+  /* Same idea, but also slides up/down (for the 220px-tall box in Step 6).
+     50px is half the image height. */
+  @keyframes slide-xy {
+    0%, 15%   { left: calc(-50% + 80px); top: calc(-50% + 50px); }
+    50%, 85%  { left: 0; top: 0; }
+    100%      { left: calc(-50% + 80px); top: calc(-50% + 50px); }
+  }
+
+  /* Step 1: nothing is centering the image, so it just floats in place */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-12px); }
+  }
+
+  /* The mistake demo: it tries to move to the center but cannot */
+  @keyframes shake {
+    0%, 55%, 100% { transform: translateX(0); }
+    60%, 70%, 80% { transform: translateX(-8px); }
+    65%, 75%, 85% { transform: translateX(8px); }
+  }
+
+  .step2 img, .step3 img, .step4 img, .step5 img, .step6 img {
+    position: relative;
+    animation: slide-x 4s ease-in-out infinite;
+  }
+  .step6 img { animation-name: slide-xy; }
+  .step1 img { animation: float 2.4s ease-in-out infinite; }
+  .wrong img { animation: shake 3s ease-in-out infinite; }
+
+  /* Bonus step: a centered image that floats up and down */
+  .bonus { padding-top: 34px; }
+  .bonus img {
+    display: block;
+    margin: 0 auto;
+    animation: float 2.4s ease-in-out infinite;
+  }
+
+  /* Respect people who ask their device to reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    .demo img { animation: none !important; }
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;
@@ -150,12 +208,14 @@
 
 <header>
   <h1>How to Center an Image on a Web Page</h1>
-  <p>Six short steps, each with the code and a live example you can see working.</p>
+  <p>Six short steps and a bonus, each with the code and a live example that moves so you can watch it work.</p>
 </header>
 
 <main>
 
 <p>By default, a browser puts every image on the <strong>left</strong> side of its container. Centering it takes one small piece of CSS. Which piece depends on how you want to do it, so we will go from the simplest idea to the most powerful one. In every example below, the dashed box is the &ldquo;page&rdquo; and the blue rectangle is the image.</p>
+
+<div class="note"><strong>Watch the motion:</strong> in each example the image starts at the default left spot and slides into its centered position, then repeats. The sliding is only there to help you see what the centering code does. The real centering code is the short snippet shown above each example. Step 7 teaches the animation code itself.</div>
 
 <!-- ========== STEP 1 ========== -->
 <h2><span class="num">1</span>Start with a normal image</h2>
@@ -213,7 +273,7 @@
   <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='100'%3E%3Crect width='160' height='100' rx='12' fill='%23FF3131'/%3E%3Cpath d='M50 30 L110 70 M110 30 L50 70' stroke='white' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E" alt="Sample image that failed to center because display block is missing">
 </div>
 
-<div class="note">This is the same approach used as an inline style on the ranking pages: <code>style="display: block; margin: 0 auto;"</code>. A class in <code>styles.css</code> does the same thing without repeating it on every image (see Step 6).</div>
+<div class="note">This is the same approach used as an inline style on the ranking pages: <code>style="display: block; margin: 0 auto;"</code>. A class in <code>styles.css</code> does the same thing without repeating it on every image (see &ldquo;Put it on your own site&rdquo; near the bottom).</div>
 
 <!-- ========== STEP 4 ========== -->
 <h2><span class="num">4</span>Method C: Flexbox</h2>
@@ -268,6 +328,37 @@
 <div class="demo step6">
   <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='100'%3E%3Crect width='160' height='100' rx='12' fill='%230047AB'/%3E%3Ccircle cx='80' cy='50' r='26' fill='%23FF69B4'/%3E%3C/svg%3E" alt="Sample image centered both ways">
 </div>
+
+<!-- ========== STEP 7 (BONUS) ========== -->
+<h2><span class="num">7</span>Bonus: make the centered image move</h2>
+<p>CSS can animate an image with two pieces: a <code>@keyframes</code> block that describes the movement, and an <code>animation</code> line that plays it. Here the centered image floats up and down.</p>
+
+<div class="label">The CSS</div>
+<pre><code>.float-img {
+  display: block;
+  margin: 0 auto;                          /* still centered */
+  animation: float 2.4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }   /* resting spot */
+  50%      { transform: translateY(-12px); } /* halfway: 12px up */
+}</code></pre>
+
+<div class="label">What you see</div>
+<div class="demo bonus">
+  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='100'%3E%3Crect width='160' height='100' rx='12' fill='%230047AB'/%3E%3Ccircle cx='80' cy='50' r='26' fill='%23FF69B4'/%3E%3C/svg%3E" alt="Sample image centered and floating up and down">
+</div>
+
+<p>What each part of the <code>animation</code> line means:</p>
+<ol class="checklist">
+  <li><code>float</code> is the name of the <code>@keyframes</code> block to play.</li>
+  <li><code>2.4s</code> is how long one full loop takes.</li>
+  <li><code>ease-in-out</code> starts and ends gently instead of moving at a constant speed.</li>
+  <li><code>infinite</code> repeats the loop forever. Use <code>1</code> to play it once.</li>
+</ol>
+
+<div class="note">Move the image with <code>transform</code>, as above. If you animated <code>margin</code> instead, you would break the <code>margin: 0 auto</code> that is keeping the image centered.</div>
 
 <!-- ========== WHICH ONE ========== -->
 <h2>Which method should you use?</h2>
